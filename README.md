@@ -12,3 +12,10 @@ gcc -o flappy-bird flappy-bird.c
 ## Jugar
 
 - Pulsar Enter para saltar
+
+## Referencia
+
+Echadle un ojico:
+https://devdocs.io/c/ 
+
+
