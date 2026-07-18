@@ -1,5 +1,7 @@
 # Flappy Bird en C (básico)
 
+Intento de recrear el famoso juego Flappy Bird, de manera sencilla, en C. Sin vibecoding, intentando usar el cerebro...
+
 ## Compilar y ejecutar
 
 ```bash
