@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-// #define MAX_TUBERIAS 3
+#define MAX_TUBERIAS 3
 
 const int hueco = 6;
 const int altura = 20;
@@ -26,9 +26,11 @@ struct Tuberia
     int fin_hueco;
 };
 
-void generarTuberia(struct Tuberia *t)
+
+
+void generarTuberia(struct Tuberia *t, int atraso)
 {
-    t->x = ancho - 1;
+    t->x = ancho + atraso - 1;
 
     int max_inicio = altura - hueco - 2;
 
@@ -43,7 +45,7 @@ void moverTuberia(struct Tuberia *t)
 
     if (t->x < 0)
     {
-        generarTuberia(t);
+        generarTuberia(t, 0);
     }
 }
 
@@ -91,7 +93,7 @@ void detectarColisionPajaro(struct Pajaro *p, struct Tuberia *t)
     }
 }
 
-void screen(struct Pajaro *p, struct Tuberia *t)
+void screen(struct Pajaro *p, struct Tuberia tuberias[])
 {
     printf("\033[H\033[J");
 
@@ -110,22 +112,32 @@ void screen(struct Pajaro *p, struct Tuberia *t)
             {
                 printf("@");
             }
+            else 
+            {
+                // Dibujamos tuberias
+                bool hayTuberia = false;
+                for (int t = 0; t < MAX_TUBERIAS; t++) 
+                {
+                    // pintar tubería
+                    if (j == tuberias[t].x)
+                    {
+                        hayTuberia = true;
+                        if (i <= tuberias[t].inicio_hueco || i >= tuberias[t].fin_hueco)
+                        {
+                            printf("#");
+                        }
+                        else 
+                        {
+                            printf(" ");
+                        }
 
-            // pintar tubería
-            else if (j == t->x)
-            {
-                if (i <= t->inicio_hueco || i >= t->fin_hueco)
-                {
-                    printf("#");
+                        break;
+                    }
                 }
-                else
-                {
+
+                if (!hayTuberia)
                     printf(" ");
-                }
-            }
-            else
-            {
-                printf(" ");
+
             }
         }
         printf("\n");
@@ -133,27 +145,33 @@ void screen(struct Pajaro *p, struct Tuberia *t)
     fflush(stdout);
 }
 
-void flappyBird(struct Pajaro *p, struct Tuberia *t)
+void flappyBird(struct Pajaro *p, struct Tuberia tuberias[])
 {
-    screen(p, t);
+    screen(p, tuberias);
     moverPajaro(p);
-    moverTuberia(t);
-    detectarColisionPajaro(p, t);
+    
+    for (int t = 0; t < MAX_TUBERIAS; t++)
+    {
+        moverTuberia(&tuberias[t]);
+        detectarColisionPajaro(p, &tuberias[t]);
+    }
+
     usleep(80000);
 }
 
 int main(void)
 {
     struct Pajaro pajaro = {.x = 5, .y = 10, .vivo = true};
-    struct Tuberia tuberia;
+    struct Tuberia tuberias[MAX_TUBERIAS];
 
-    generarTuberia(&tuberia);
+    for (int i = 0; i < MAX_TUBERIAS; i++)
+        generarTuberia(&tuberias[i], i * (ancho/MAX_TUBERIAS));
 
     fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 
     while (pajaro.vivo == true)
     {
-        flappyBird(&pajaro, &tuberia);
+        flappyBird(&pajaro, tuberias);
     }
 
     return EXIT_SUCCESS;
