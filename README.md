@@ -4,9 +4,16 @@ Intento de recrear el famoso juego Flappy Bird, de manera sencilla, en C, usando
 
 ## Compilar y ejecutar
 
+Compilar y ejecutar a mano:
+
 ```bash
 gcc -o flappy-bird flappy-bird.c
 ./flappy-bird
+```
+o usar el Makefile:
+
+```bash
+make run
 ```
 
 ## Jugar
